@@ -44,7 +44,7 @@ async function run() {
         console.log("MongoDB connected");
 
         const menuCollection = await client.db('arborCafe').collection('menu');
-        const foodCollection = await client.db('arborCafe').collection('food');
+        const bookingDataCollection = await client.db('arborCafe').collection('bookingData');
         const messageCollection = await client.db('arborCafe').collection('message');
         app.get('/menu', async (req, res) => {
             try {
@@ -100,6 +100,26 @@ async function run() {
                 });
             }
         });
+
+        app.post('/book-your-table', async (req, res) => {
+
+            const bookingData = req.body;
+            if (!bookingData.name || !bookingData.email || !bookingData.phone || !bookingData.people || !bookingData.date || !bookingData.time) {
+                return res.status(400).send({ error: 'Missing required fields' });
+
+            }
+            try {
+                const result = await bookingDataCollection.insertOne(bookingData);
+                res.status(201).send(result);
+            } catch (error) {
+                console.error('Error in inserting booking data:', error);
+                res.status(500).send({
+                    error: 'Failed to insert booking data',
+                    details: error.message
+                })
+            }
+
+        })
 
 
 
