@@ -75,6 +75,21 @@ async function run() {
                 res.status(500).send({ error: 'Failed to fetch messages' });
             }
         })
+        app.get('/booingData', async (req, res) => {
+            try {
+                const result = await bookingDataCollection.find().toArray();
+                console.log('Fetched data:', result);
+                if (result === 0) {
+                    return res.status(404).send({ error: 'No booking data found' });
+                }
+                res.send(result)
+
+            } catch (error) {
+                console.error('Error in fetching data: ', error);
+                res.status(500).send({ error: 'Failed to fetched the booking data' });
+
+            }
+        })
 
         app.post('/message', async (req, res) => {
             console.log(" Received POST /message request");
@@ -100,6 +115,8 @@ async function run() {
                 });
             }
         });
+
+
 
         app.post('/book-your-table', async (req, res) => {
 
